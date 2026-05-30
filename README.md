@@ -4,6 +4,7 @@ An interactive generative-art piece: a **strange attractor** — a single point 
 
 > 一个交互式生成艺术作品。一个点,被四个常数支配,迭代上百万次——永不重复、永不逃逸;它游走的**密度**沉积成图像。换个种子,就是另一个宇宙。
 
+
 ![no dependencies](https://img.shields.io/badge/dependencies-p5.js%20only-1f6f63) ![reproducible](https://img.shields.io/badge/seeds-reproducible-6a9bcc) ![license](https://img.shields.io/badge/license-MIT-d97757)
 
 <!-- Add a render: open index.html, click "↓ Download PNG", save it as docs/preview.png, then uncomment: -->
