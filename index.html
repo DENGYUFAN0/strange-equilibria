@@ -3,6 +3,7 @@
     Strange Equilibria — an interactive generative art piece.
     Built on the Anthropic algorithmic-art viewer template (branding/layout/seed-nav kept).
     The algorithm is a De Jong strange attractor rendered as accumulated visitation density.
+    Bilingual UI (English / 中文) with a one-click toggle.
 -->
 <html lang="en">
 <head>
@@ -14,7 +15,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* Anthropic Brand Colors */
         :root {
             --anthropic-dark: #141413;
             --anthropic-light: #faf9f5;
@@ -36,6 +36,10 @@
             backdrop-filter: blur(10px); padding: 24px; border-radius: 12px;
             box-shadow: 0 10px 30px rgba(20, 20, 19, 0.1); overflow-y: auto; overflow-x: hidden;
         }
+        .lang-row { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+        .lang-seg { display: inline-flex; border: 1px solid var(--anthropic-light-gray); border-radius: 8px; overflow: hidden; }
+        .lang-seg button { border: none; background: none; padding: 5px 12px; font-size: 12px; cursor: pointer; color: var(--anthropic-mid-gray); font-family: inherit; font-weight: 600; }
+        .lang-seg button.on { background: var(--anthropic-dark); color: #fff; }
         .sidebar h1 { font-family: 'Lora', serif; font-size: 24px; font-weight: 500; color: var(--anthropic-dark); margin-bottom: 8px; }
         .sidebar .subtitle { color: var(--anthropic-mid-gray); font-size: 13px; margin-bottom: 28px; line-height: 1.5; }
         .control-section { margin-bottom: 30px; }
@@ -67,7 +71,6 @@
         .button.tertiary:hover { background: #6b7b52; }
         .button-row { display: flex; gap: 8px; margin-bottom: 8px; }
         .button-row .button { flex: 1; }
-        /* Variable addition: the "equations of this universe" readout */
         .universe { background: var(--anthropic-dark); color: #e8e6dc; border-radius: 8px; padding: 14px; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.7; }
         .universe .eq { color: #f0ad8b; }
         .universe .muted { color: var(--anthropic-mid-gray); }
@@ -81,25 +84,31 @@
 <body>
     <div class="container">
         <div class="sidebar">
-            <h1>Strange Equilibria</h1>
-            <div class="subtitle">奇异平衡 · the sediment of deterministic chaos. A single point, governed by four constants, wanders a million times — never repeating, never escaping.</div>
+            <div class="lang-row">
+                <div class="lang-seg" id="langSeg">
+                    <button data-lang="en" class="on" onclick="setLang('en')">EN</button>
+                    <button data-lang="zh" onclick="setLang('zh')">中</button>
+                </div>
+            </div>
+            <h1 data-i18n="title">Strange Equilibria</h1>
+            <div class="subtitle" data-i18n="subtitle">The sediment of deterministic chaos. A single point, governed by four constants, wanders a million times — never repeating, never escaping.</div>
 
             <!-- Seed Section -->
             <div class="control-section">
-                <h3>Seed</h3>
+                <h3 data-i18n="seed">Seed</h3>
                 <input type="number" id="seed-input" class="seed-input" value="34" onchange="updateSeed()">
                 <div class="seed-controls">
-                    <button class="button secondary" onclick="previousSeed()">← Prev</button>
-                    <button class="button secondary" onclick="nextSeed()">Next →</button>
+                    <button class="button secondary" data-i18n="prev" onclick="previousSeed()">← Prev</button>
+                    <button class="button secondary" data-i18n="next" onclick="nextSeed()">Next →</button>
                 </div>
-                <button class="button tertiary regen-button" onclick="randomSeedAndUpdate()">↻ Random universe</button>
+                <button class="button tertiary regen-button" data-i18n="random" onclick="randomSeedAndUpdate()">↻ Random universe</button>
             </div>
 
             <!-- This universe (read-only readout) -->
             <div class="control-section">
-                <h3>This universe</h3>
+                <h3 data-i18n="universe">This universe</h3>
                 <div class="universe">
-                    <div class="muted">De Jong attractor</div>
+                    <div class="muted" data-i18n="attractor">De Jong attractor</div>
                     <div class="eq">x′ = sin(a·y) − cos(b·x)</div>
                     <div class="eq">y′ = sin(c·x) − cos(d·y)</div>
                     <div id="constants" style="margin-top:8px">a=… b=… c=… d=…</div>
@@ -109,30 +118,30 @@
 
             <!-- Parameters -->
             <div class="control-section">
-                <h3>Parameters</h3>
+                <h3 data-i18n="parameters">Parameters</h3>
                 <div class="control-group">
-                    <label>Density (iterations)</label>
+                    <label data-i18n="density">Density (iterations)</label>
                     <div class="slider-container">
                         <input type="range" id="density" min="0.5" max="6" step="0.25" value="2.5" oninput="updateParam('density', this.value)">
                         <span class="value-display" id="density-value">2.5M</span>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label>Contrast (tone curve)</label>
+                    <label data-i18n="contrast">Contrast (tone curve)</label>
                     <div class="slider-container">
                         <input type="range" id="gamma" min="0.25" max="1.2" step="0.05" value="0.55" oninput="updateParam('gamma', this.value)">
                         <span class="value-display" id="gamma-value">0.55</span>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label>Fill (frame)</label>
+                    <label data-i18n="fill">Fill (frame)</label>
                     <div class="slider-container">
                         <input type="range" id="fill" min="0.6" max="1.4" step="0.05" value="1.0" oninput="updateParam('fill', this.value)">
                         <span class="value-display" id="fill-value">1.00</span>
                     </div>
                 </div>
                 <div class="control-group">
-                    <label>Rotation</label>
+                    <label data-i18n="rotation">Rotation</label>
                     <div class="slider-container">
                         <input type="range" id="rotation" min="0" max="360" step="5" value="0" oninput="updateParam('rotation', this.value)">
                         <span class="value-display" id="rotation-value">0°</span>
@@ -142,23 +151,23 @@
 
             <!-- Colors -->
             <div class="control-section">
-                <h3>Colors</h3>
+                <h3 data-i18n="colors">Colors</h3>
                 <div class="color-group">
-                    <label>Paper (background)</label>
+                    <label data-i18n="paper">Paper (background)</label>
                     <div class="color-picker-container">
                         <input type="color" id="paper" value="#f3efe6" onchange="updateColor('paper', this.value)">
                         <span class="color-value" id="paper-value">#f3efe6</span>
                     </div>
                 </div>
                 <div class="color-group">
-                    <label>Ink (filaments)</label>
+                    <label data-i18n="ink">Ink (filaments)</label>
                     <div class="color-picker-container">
                         <input type="color" id="ink" value="#1b2a3a" onchange="updateColor('ink', this.value)">
                         <span class="color-value" id="ink-value">#1b2a3a</span>
                     </div>
                 </div>
                 <div class="color-group">
-                    <label>Glow (dense cores)</label>
+                    <label data-i18n="glow">Glow (dense cores)</label>
                     <div class="color-picker-container">
                         <input type="color" id="accent" value="#d97757" onchange="updateColor('accent', this.value)">
                         <span class="color-value" id="accent-value">#d97757</span>
@@ -168,23 +177,62 @@
 
             <!-- Actions -->
             <div class="control-section">
-                <h3>Actions</h3>
+                <h3 data-i18n="actions">Actions</h3>
                 <div class="button-row">
-                    <button class="button secondary" onclick="regenerate()">↻ Regenerate</button>
-                    <button class="button" onclick="resetParameters()">Reset</button>
+                    <button class="button secondary" data-i18n="regenerate" onclick="regenerate()">↻ Regenerate</button>
+                    <button class="button" data-i18n="reset" onclick="resetParameters()">Reset</button>
                 </div>
-                <button class="button tertiary" onclick="downloadPNG()">↓ Download PNG</button>
+                <button class="button tertiary" data-i18n="download" onclick="downloadPNG()">↓ Download PNG</button>
             </div>
         </div>
 
         <div class="canvas-area">
             <div id="canvas-container">
-                <div class="loading">Settling the attractor…</div>
+                <div class="loading" data-i18n="loading">Settling the attractor…</div>
             </div>
         </div>
     </div>
 
     <script>
+    // ════════════════════════════════════════════════════════════════════════
+    //  i18n — English / 中文
+    // ════════════════════════════════════════════════════════════════════════
+    const STR = {
+        en: {
+            title: 'Strange Equilibria',
+            subtitle: 'The sediment of deterministic chaos. A single point, governed by four constants, wanders a million times — never repeating, never escaping.',
+            seed: 'Seed', prev: '← Prev', next: 'Next →', random: '↻ Random universe',
+            universe: 'This universe', attractor: 'De Jong attractor',
+            parameters: 'Parameters', density: 'Density (iterations)', contrast: 'Contrast (tone curve)',
+            fill: 'Fill (frame)', rotation: 'Rotation',
+            colors: 'Colors', paper: 'Paper (background)', ink: 'Ink (filaments)', glow: 'Glow (dense cores)',
+            actions: 'Actions', regenerate: '↻ Regenerate', reset: 'Reset', download: '↓ Download PNG',
+            chaotic: '(chaotic)', loading: 'Settling the attractor…'
+        },
+        zh: {
+            title: '奇异平衡',
+            subtitle: '确定性混沌的沉积。一个点,被四个常数支配,游走百万次——永不重复,永不逃逸。',
+            seed: '种子', prev: '← 上一个', next: '下一个 →', random: '↻ 随机宇宙',
+            universe: '这个宇宙', attractor: '德容(De Jong)吸引子',
+            parameters: '参数', density: '密度(迭代次数)', contrast: '对比(色调曲线)',
+            fill: '占幅', rotation: '旋转',
+            colors: '颜色', paper: '纸(背景)', ink: '墨(丝缕)', glow: '辉光(密集核心)',
+            actions: '操作', regenerate: '↻ 重新生成', reset: '重置', download: '↓ 下载 PNG',
+            chaotic: '(混沌)', loading: '正在让吸引子收敛…'
+        }
+    };
+    let lang = (function () { try { return localStorage.getItem('se_lang') || 'en'; } catch (e) { return 'en'; } })();
+
+    function applyLang() {
+        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+        document.querySelectorAll('#langSeg button').forEach(function (b) { b.classList.toggle('on', b.dataset.lang === lang); });
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+            const v = STR[lang][el.dataset.i18n]; if (v != null) el.textContent = v;
+        });
+        if (typeof A === 'number') updateUniverseReadout();
+    }
+    function setLang(l) { lang = l; try { localStorage.setItem('se_lang', l); } catch (e) {} applyLang(); }
+
     // ════════════════════════════════════════════════════════════════════════
     //  STRANGE EQUILIBRIA — De Jong strange attractor, rendered as density.
     // ════════════════════════════════════════════════════════════════════════
@@ -204,26 +252,24 @@
     };
     const defaultParams = { ...params };
 
-    // System state
     let A, B, C, D, LYAP;         // the four constants + Lyapunov exponent
     let density;                  // Float32Array(SIZE*SIZE) — visitation counts
     let maxD = 0;
-    let iter = 0, target = 0;     // accumulation progress
-    let ax = 0.1, ay = 0.1;       // running attractor position
+    let iter = 0, target = 0;
+    let ax = 0.1, ay = 0.1;
     let cx = 0, cy = 0, scale = 1, rot = 0;
 
     function setup() {
         const cnv = createCanvas(SIZE, SIZE);
         cnv.parent('canvas-container');
-        pixelDensity(1);          // 1:1 pixel buffer so density maps cleanly
+        pixelDensity(1);
         const l = document.querySelector('.loading'); if (l) l.style.display = 'none';
         initializeSystem();
     }
 
-    // ---- Lyapunov exponent: positive ⇒ genuinely chaotic (alive) ----
     function lyapunov(a, b, c, d) {
         let x = 0.1, y = 0.1;
-        for (let i = 0; i < 500; i++) {            // settle onto attractor
+        for (let i = 0; i < 500; i++) {
             const nx = Math.sin(a * y) - Math.cos(b * x);
             const ny = Math.sin(c * x) - Math.cos(d * y);
             x = nx; y = ny;
@@ -241,14 +287,13 @@
             const dist = Math.sqrt(dx * dx + dy * dy);
             if (dist > 0) {
                 sum += Math.log(dist / d0);
-                xe = x + dx * (d0 / dist);          // renormalize separation
+                xe = x + dx * (d0 / dist);
                 ye = y + dy * (d0 / dist);
             }
         }
         return sum / n;
     }
 
-    // ---- Seed → four constants, gated so every seed is chaotic ----
     function pickChaoticParams() {
         let a, b, c, d, lyap = -1, attempts = 0;
         do {
@@ -267,7 +312,6 @@
         A = p.a; B = p.b; C = p.c; D = p.d; LYAP = p.lyap;
         rot = radians(params.rotation);
 
-        // settle, then a bounds pre-pass (apply rotation so the frame fits)
         let x = 0.1, y = 0.1;
         for (let i = 0; i < 1000; i++) { const nx = Math.sin(A*y)-Math.cos(B*x); const ny = Math.sin(C*x)-Math.cos(D*y); x = nx; y = ny; }
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -286,7 +330,6 @@
         maxD = 0; iter = 0;
         target = Math.round(params.density * 1e6);
 
-        // running position for accumulation (discard transient once)
         ax = 0.1; ay = 0.1;
         for (let i = 0; i < 1000; i++) { const nx = Math.sin(A*ay)-Math.cos(B*ax); const ny = Math.sin(C*ax)-Math.cos(D*ay); ax = nx; ay = ny; }
 
@@ -322,23 +365,21 @@
         return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)];
     }
 
-    // Map accumulated density → pixels via a per-render integer lookup table.
     function renderDensity() {
         if (maxD <= 0) return;
         const paper = hexToRgb(params.paper), ink = hexToRgb(params.ink), accent = hexToRgb(params.accent);
         const g = params.gamma;
         const invLogMax = 1 / Math.log(1 + maxD);
         const maxI = maxD | 0;
-        // LUT: density count → [r,g,b]
         const lut = new Uint8ClampedArray((maxI + 1) * 3);
         for (let dv = 0; dv <= maxI; dv++) {
             let t = dv <= 0 ? 0 : Math.pow(Math.log(1 + dv) * invLogMax, g);
             if (t > 1) t = 1;
             let r, gg, b;
-            if (t < 0.7) {                       // paper → ink
+            if (t < 0.7) {
                 const u = t / 0.7;
                 r = paper[0] + (ink[0]-paper[0])*u; gg = paper[1] + (ink[1]-paper[1])*u; b = paper[2] + (ink[2]-paper[2])*u;
-            } else {                              // ink → glow (dense cores)
+            } else {
                 const u = (t - 0.7) / 0.3;
                 r = ink[0] + (accent[0]-ink[0])*u; gg = ink[1] + (accent[1]-ink[1])*u; b = ink[2] + (accent[2]-ink[2])*u;
             }
@@ -356,7 +397,7 @@
     function updateUniverseReadout() {
         document.getElementById('constants').innerHTML =
             'a=' + A.toFixed(3) + '  b=' + B.toFixed(3) + '<br>c=' + C.toFixed(3) + '  d=' + D.toFixed(3);
-        document.getElementById('lyap').textContent = 'λ = ' + LYAP.toFixed(3) + '  (chaotic)';
+        document.getElementById('lyap').textContent = 'λ = ' + LYAP.toFixed(3) + '  ' + STR[lang].chaotic;
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -372,8 +413,8 @@
     function updateParam(name, value) {
         params[name] = parseFloat(value);
         document.getElementById(name + '-value').textContent = fmt(name, params[name]);
-        if (name === 'gamma') renderDensity();   // tone curve: re-render only, no re-accumulate
-        else initializeSystem();                  // density/fill/rotation change the buffer
+        if (name === 'gamma') renderDensity();
+        else initializeSystem();
     }
 
     function updateColor(id, value) {
@@ -382,7 +423,6 @@
         renderDensity();
     }
 
-    // ---- Seed controls ----
     function updateSeedDisplay() { document.getElementById('seed-input').value = params.seed; }
     function updateSeed() {
         const v = parseInt(document.getElementById('seed-input').value);
@@ -410,7 +450,7 @@
 
     function downloadPNG() { saveCanvas('strange-equilibria-seed-' + params.seed, 'png'); }
 
-    window.addEventListener('load', updateSeedDisplay);
+    window.addEventListener('load', function () { updateSeedDisplay(); applyLang(); });
     </script>
 </body>
 </html>
